@@ -32,8 +32,6 @@ function safelyParseJson(json) {
   }
 }
 
-function noop() {}
-
 exports.createServer = function(opts) {
   if (!opts) opts = {}
 
@@ -87,7 +85,7 @@ exports.createServer = function(opts) {
     }
 
     ogr.exec(function(er, data) {
-      fs.unlink(req.files.upload.path, noop)
+      fs.unlink(req.files.upload.path)
 
       if (isOgreFailureError(er)) {
         return res.status(400).json({errors: er.message.replace('\n\n', '').split('\n')})
@@ -129,6 +127,11 @@ exports.createServer = function(opts) {
     if (opts.timeout) {
       ogr.timeout(opts.timeout)
     }
+
+   if (req.body.targetSrs) {
+      ogr.project(req.body.targetSrs, req.body.sourceSrs)
+    }
+
 
     var format = req.body.format || 'shp'
 
